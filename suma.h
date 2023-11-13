@@ -1,6 +1,7 @@
 #ifndef SUMA_H
 #define SUMA_H
 #include <vector>
+void MenuPrincipal();
 // Variables para almacenar las matrices y el Historial
 std::vector<std::vector<int>> matrizA, matrizB;
 std::vector<std::vector<std::vector<int>>> HistorialSuma;
@@ -8,6 +9,7 @@ std::vector<std::vector<std::vector<int>>> HistorialSuma;
 std::vector<std::vector<int>> sumaMatrices(const std::vector<std::vector<int>>& matrizA, const std::vector<std::vector<int>>& matrizB) {
     if (matrizA.size() != matrizB.size() || matrizA[0].size() != matrizB[0].size()) {
         throw std::invalid_argument("Las matrices deben tener las mismas dimensiones para la suma.");
+
     }
     int filas = matrizA.size();
     int columnas = matrizA[0].size();

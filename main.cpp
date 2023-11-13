@@ -10,6 +10,7 @@
 
 // Función para solicitar las filas y columnas de una matriz
 void solicitarDimensiones(std::vector<std::vector<int>>& matriz, const std::string& nombre) {
+    matriz.clear();
     size_t filas, columnas;
     std::cout << "Ingrese el número de filas de la matriz " << nombre << ": ";
     std::cin >> filas;
@@ -79,6 +80,7 @@ void MenuPrincipal(){
             break;
             case 5:
             agregarNuevasMatrices();
+            break;
             case 6:
             std::cout << "Saliendo del programa. ¡Hasta luego!" << std::endl;
             break;

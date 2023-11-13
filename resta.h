@@ -2,10 +2,12 @@
 #define RESTA_H
 #include <iostream>
 #include <vector>
+void MenuPrincipal();
 std::vector<std::vector<std::vector<int>>> HistorialResta;
 std::vector<std::vector<int>> restaMatrices(const std::vector<std::vector<int>>& matrizA, const std::vector<std::vector<int>>& matrizB) {
     if (matrizA.size() != matrizB.size() || matrizA[0].size() != matrizB[0].size()) {
-        throw std::invalid_argument("Las matrices deben tener las mismas dimensiones para la suma.");
+        throw std::invalid_argument("Las matrices deben tener las mismas dimensiones para la resta.");
+        MenuPrincipal();
     }
     int filas = matrizA.size();
     int columnas = matrizA[0].size();

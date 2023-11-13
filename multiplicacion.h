@@ -2,24 +2,33 @@
 #define MULTIPLICACION_H
 #include <iostream>
 #include <vector>
+void MenuPrincipal();
 // Variables para almacenar las matrices y el HistorialMulti
 std::vector<std::vector<std::vector<int>>> HistorialMulti;
 std::vector<std::vector<int>> multiplicacionMatrices(const std::vector<std::vector<int>>& matrizA, const std::vector<std::vector<int>>& matrizB) {
-    if (matrizA.size() != matrizB.size() || matrizA[0].size() != matrizB[0].size()) {
-        throw std::invalid_argument("Las matrices deben tener las mismas dimensiones para la suma.");
+    if (matrizA[0].size() != matrizB.size()) {
+        throw std::invalid_argument("El número de columnas de la matrizA debe ser igual al número de filas de la matrizB.");
+        MenuPrincipal();
     }
-    int filas = matrizA.size();
-    int columnas = matrizA[0].size();
-    // Inicializa la matriz resultante con las mismas dimensiones que las matrices de entrada
-    std::vector<std::vector<int>> resultado(filas, std::vector<int>(columnas, 0));
-    HistorialMulti.clear();  // Limpiar HistorialMulti
-    // Realiza la multplicacion de las matrices
 
-    for (size_t i = 0; i < filas; ++i) {
+    int filasA = matrizA.size();
+    int columnasA = matrizA[0].size();
+    int filasB = matrizB.size();
+    int columnasB = matrizB[0].size();
+
+    // Inicializa la matriz resultante con las mismas filas de la matrizA y las mismas columnas de la matrizB
+    std::vector<std::vector<int>> resultado(filasA, std::vector<int>(columnasB, 0));
+
+    HistorialMulti.clear();  // Limpiar HistorialMulti
+
+    // Realiza la multiplicación de las matrices
+    for (int i = 0; i < filasA; ++i) {
         std::vector<std::vector<int>> paso;  // HistorialMulti de este paso
-        for (size_t j = 0; j < columnas; ++j) {
-            resultado[i][j] = matrizA[i][j] * matrizB[i][j];
-            paso.push_back({matrizA[i][j], matrizB[i][j], resultado[i][j]});
+        for (int j = 0; j < columnasB; ++j) {
+            for (int k = 0; k < columnasA; ++k) {
+                resultado[i][j] += matrizA[i][k] * matrizB[k][j];
+                paso.push_back({matrizA[i][k], matrizB[k][j], resultado[i][j]});
+            }
         }
         HistorialMulti.push_back(paso);  // Agregar el paso al HistorialMulti
     }
