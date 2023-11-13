@@ -27,7 +27,7 @@ double pedirNumeroMM() {
 
     do {
         std::cin >> numero;
-        if (std::cin.fail() || numero < 1 || numero > 5) {
+        if (std::cin.fail() || numero < 1 || numero > 6) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Por favor, ingrese un número válido del 1 al 5: ";
@@ -161,13 +161,17 @@ bool ValidarFechaHora(const std::string& fechaHoraStr, const char* format) {
     }
     return true;
 }
-void imprimirMatriz(const std::vector<std::vector<double>>& matriz) {
+void imprimirMatriz(const std::vector<std::vector<int>>& matriz) {
     for (const auto& fila : matriz) {
-        for (double elemento : fila) {
+        for (int elemento : fila) {
             std::cout << elemento << " ";
         }
         std::cout << std::endl;
     }
 }
+void waitForEnter() {
+    std::cout << "Presiona Enter para continuar...\n";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
+}
 #endif

@@ -8,6 +8,28 @@
 #include "Validaciones.h"
 
 
+// Función para solicitar las filas y columnas de una matriz
+void solicitarDimensiones(std::vector<std::vector<int>>& matriz, const std::string& nombre) {
+    size_t filas, columnas;
+    std::cout << "Ingrese el número de filas de la matriz " << nombre << ": ";
+    std::cin >> filas;
+    std::cout << "Ingrese el número de columnas de la matriz " << nombre << ": ";
+    std::cin >> columnas;
+
+    matriz.resize(filas, std::vector<int>(columnas, 0.0));
+
+    std::cout << "Ingrese los elementos de la matriz " << nombre << ":\n";
+    for (size_t i = 0; i < filas; ++i) {
+        for (size_t j = 0; j < columnas; ++j) {
+            std::cout << nombre << "[" << i << "][" << j << "]: ";
+            std::cin >> matriz[i][j];
+        }
+    }
+}
+void agregarNuevasMatrices() {
+    solicitarDimensiones(matrizA, "A");
+    solicitarDimensiones(matrizB, "B");
+}
 void MenuPrincipal(){
         // Mostrar las matrices y el historial
         std::cout << "Matriz A:\n";
@@ -20,32 +42,47 @@ void MenuPrincipal(){
         std::cout << "2. Resta de matrices" << std::endl;
         std::cout << "3. Multiplicacion de matrices" << std::endl;
         std::cout << "4. Division de matrices" << std::endl;
-        std::cout << "5. Cerrar Programa. " << std::endl;
+        std::cout << "5. Agregar nuevas matrices" << std::endl;
+        std::cout << "6. Cerrar Programa. " << std::endl;
 
         opcion = pedirNumeroMM();//Aqui hace la llamada a la funcion para que pueda validar el numero
         //Aqui hacemos que un switch case para elegir la opcion y llame a su respectiva funcion
         do{
      
             switch(opcion){
-            case 1:historial.push_back(sumaMatrices(matrizA,matrizB));
-           
+            case 1:HistorialSuma.push_back(sumaMatrices(matrizA,matrizB));
+            std::cout<<"Resultado de la matriz\n";
+            imprimirMatriz(sumaMatrices(matrizA,matrizB));
+            mostrarHistorialSuma();
+            waitForEnter();
+            MenuPrincipal();
             break;
-            case 2:
-            historial.push_back(restaMatrices(matrizA, matrizB));
+            case 2:HistorialResta.push_back(restaMatrices(matrizA, matrizB));
             LimpiarPantalla();
+            std::cout<<"Resultado de la matriz\n";
+            imprimirMatriz(restaMatrices(matrizA,matrizB));
+            mostrarHistorialResta();
+            waitForEnter();
+            MenuPrincipal();
             break;
             case 3:
-            historial.push_back(multiplicacionMatrices(matrizA, matrizB));
+            HistorialMulti.push_back(multiplicacionMatrices(matrizA, matrizB));
             LimpiarPantalla();
+            std::cout<<"Resultado de la matriz\n";
+            imprimirMatriz(multiplicacionMatrices(matrizA,matrizB));
+            mostrarHistorialMultiplicacion();
+            waitForEnter();
+            MenuPrincipal();
             break;
             case 4:
             LimpiarPantalla();
             break;
-            case 5: std::cout << "Saliendo del programa. ¡Hasta luego!" << std::endl; 
-
+            case 5:
+            agregarNuevasMatrices();
+            case 6:
+            std::cout << "Saliendo del programa. ¡Hasta luego!" << std::endl;
             break;
-        
-            default: std:: cout <<"Elige una opcion del 1 al 5";break;
+            default: std:: cout <<"Elige una opcion del 1 al 6";break;
 
             }   
         } while (opcion!=5);
@@ -53,54 +90,8 @@ void MenuPrincipal(){
 }
 int main ()
 {
-
-    // Solicitar dimensiones de la matriz A
-    size_t filasA, columnasA;
-    std::cout << "Ingrese el número de filas de la matriz A: ";
-    std::cin >> filasA;
-    std::cout << "Ingrese el número de columnas de la matriz A: ";
-    std::cin >> columnasA;
-
-    // Solicitar dimensiones de la matriz B
-    size_t filasB, columnasB;
-    std::cout << "Ingrese el número de filas de la matriz B: ";
-    std::cin >> filasB;
-    std::cout << "Ingrese el número de columnas de la matriz B: ";
-    std::cin >> columnasB;
-
-    // Validar que las matrices sean conformables para las operaciones
-    if (columnasA != filasB) {
-        std::cerr << "Error: Las matrices no son conformables para la multiplicación." << std::endl;
-        return 1;
-    }
-
-    // Inicializar la matriz A
-    std::cout << "Ingrese los elementos de la matriz A:" << std::endl;
-    matrizA.resize(filasA, std::vector<double>(columnasA, 0.0));
-    for (size_t i = 0; i < filasA; ++i) {
-        for (size_t j = 0; j < columnasA; ++j) {
-            std::cout << "A[" << i << "][" << j << "]: ";
-            std::cin >> matrizA[i][j];
-        }
-    }
-
-    // Inicializar la matriz B
-    std::cout << "Ingrese los elementos de la matriz B:" << std::endl;
-    matrizB.resize(filasB, std::vector<double>(columnasB, 0.0));
-    for (size_t i = 0; i < filasB; ++i) {
-        for (size_t j = 0; j < columnasB; ++j) {
-            std::cout << "B[" << i << "][" << j << "]: ";
-            std::cin >> matrizB[i][j];
-        }
-    }
-
+    agregarNuevasMatrices();
     MenuPrincipal();
-    std::cout << "Historial de operaciones:\n";
-    for (size_t i = 0; i < historial.size(); ++i) {
-        std::cout << "Operación " << i + 1 << ":\n";
-        imprimirMatriz(historial[i]);
-        std::cout << std::endl;
-    }
 
     return 0;
 }
