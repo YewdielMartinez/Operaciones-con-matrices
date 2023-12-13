@@ -3,21 +3,31 @@
 #include <iostream>
 #include <vector>
 void MenuPrincipal();
-std::vector<std::vector<std::vector<int>>> HistorialResta;
-std::vector<std::vector<int>> restaMatrices(const std::vector<std::vector<int>>& matrizA, const std::vector<std::vector<int>>& matrizB) {
+std::vector<std::vector<std::vector<double>>> HistorialResta;
+std::vector<std::vector<double>> restaMatrices(const std::vector<std::vector<double>>& matrizA, const std::vector<std::vector<double>>& matrizB) {
     if (matrizA.size() != matrizB.size() || matrizA[0].size() != matrizB[0].size()) {
-        throw std::invalid_argument("Las matrices deben tener las mismas dimensiones para la resta.");
+        std::cout << "Las matrices deben tener las mismas dimensiones para la resta.\n";
+        MenuPrincipal();
+    }
+
+    if (matrizA.empty() || matrizB.empty() || matrizA[0].empty() || matrizB[0].empty()) {
+        std::cout << "Las matrices no pueden estar vacías para la resta.\n";
+        MenuPrincipal();
+    }
+
+    if (matrizA.size() == 0 || matrizA[0].size() == 0 || matrizB.size() == 0 || matrizB[0].size() == 0) {
+        std::cout << "Las matrices deben tener al menos una fila y una columna para la resta.\n";
         MenuPrincipal();
     }
     int filas = matrizA.size();
     int columnas = matrizA[0].size();
     // Inicializa la matriz resultante con las mismas dimensiones que las matrices de entrada
-    std::vector<std::vector<int>> resultado(filas, std::vector<int>(columnas, 0));
+    std::vector<std::vector<double>> resultado(filas, std::vector<double>(columnas, 0));
     HistorialResta.clear();  // Limpiar HistorialResta
     // Realiza la resta de las matrices
 
     for (size_t i = 0; i < filas; ++i) {
-        std::vector<std::vector<int>> paso;  // HistorialResta de este paso
+        std::vector<std::vector<double>> paso;  // HistorialResta de este paso
         for (size_t j = 0; j < columnas; ++j) {
             resultado[i][j] = matrizA[i][j] - matrizB[i][j];
             paso.push_back({matrizA[i][j], matrizB[i][j], resultado[i][j]});

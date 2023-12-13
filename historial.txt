@@ -1,0 +1,64 @@
+Operacion: Suma
+
+Matriz A:
+9 8 7 
+6 5 4 
+3 2 1 
+
+Matriz B:
+1 2 3 
+4 5 6 
+7 8 9 
+
+Resultado:
+10 10 10 
+10 10 10 
+10 10 10 
+Operacion: Resta
+
+Matriz A:
+9 8 7 
+6 5 4 
+3 2 1 
+
+Matriz B:
+1 2 3 
+4 5 6 
+7 8 9 
+
+Resultado:
+8 6 4 
+2 0 -2 
+-4 -6 -8 
+Operacion: Multiplicacion
+
+Matriz A:
+9 8 7 
+6 5 4 
+3 2 1 
+
+Matriz B:
+1 2 3 
+4 5 6 
+7 8 9 
+
+Resultado:
+90 114 138 
+54 69 84 
+18 24 30 
+Operacion: Suma
+
+Matriz A:
+1 2 3 
+4 5 6 
+7 8 9 
+
+Matriz B:
+5 4 6 
+3 7 2 
+7 1 7 
+
+Resultado:
+6 6 9 
+7 12 8 
+14 9 16 

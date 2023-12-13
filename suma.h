@@ -1,25 +1,34 @@
 #ifndef SUMA_H
 #define SUMA_H
 #include <vector>
+#include "Validaciones.h"
 void MenuPrincipal();
 // Variables para almacenar las matrices y el Historial
-std::vector<std::vector<int>> matrizA, matrizB;
-std::vector<std::vector<std::vector<int>>> HistorialSuma;
+std::vector<std::vector<double>> matrizA, matrizB;
+std::vector<std::vector<std::vector<double>>> HistorialSuma;
 
-std::vector<std::vector<int>> sumaMatrices(const std::vector<std::vector<int>>& matrizA, const std::vector<std::vector<int>>& matrizB) {
+std::vector<std::vector<double>> sumaMatrices(const std::vector<std::vector<double>>& matrizA, const std::vector<std::vector<double>>& matrizB) {
     if (matrizA.size() != matrizB.size() || matrizA[0].size() != matrizB[0].size()) {
-        throw std::invalid_argument("Las matrices deben tener las mismas dimensiones para la suma.");
-
+        std::cout<<"Las matrices deben tener las mismas dimensiones para la suma.\n";
+        MenuPrincipal();
+    }
+    if (matrizA.empty() || matrizB.empty() || matrizA[0].empty() || matrizB[0].empty()) {
+    std::cout<<"Las matrices no pueden estar vacías para la suma.\n";
+    MenuPrincipal();
+    }
+    if (matrizA.size() == 0 || matrizA[0].size() == 0 || matrizB.size() == 0 || matrizB[0].size() == 0) {
+    std::cout<<"Las matrices deben tener al menos una fila y una columna para la suma.\n";
+    MenuPrincipal();
     }
     int filas = matrizA.size();
     int columnas = matrizA[0].size();
     // Inicializa la matriz resultante con las mismas dimensiones que las matrices de entrada
-    std::vector<std::vector<int>> resultado(filas, std::vector<int>(columnas, 0));
+    std::vector<std::vector<double>> resultado(filas, std::vector<double>(columnas, 0));
     HistorialSuma.clear();  // Limpiar Historial
     // Realiza la suma de las matrices
 
     for (size_t i = 0; i < filas; ++i) {
-        std::vector<std::vector<int>> paso;  // Historial de este paso
+        std::vector<std::vector<double>> paso;  // Historial de este paso
         for (size_t j = 0; j < columnas; ++j) {
             resultado[i][j] = matrizA[i][j] + matrizB[i][j];
             paso.push_back({matrizA[i][j], matrizB[i][j], resultado[i][j]});

@@ -83,7 +83,7 @@ double pedirNumeroMC() {
 
     do {
         std::cin >> numero;
-        if (std::cin.fail() || numero < 1 || numero > 7) {
+        if (std::cin.fail() || numero < 1 || numero > 8) {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Por favor, ingrese un número válido del 1 al 7: ";
@@ -161,7 +161,7 @@ bool ValidarFechaHora(const std::string& fechaHoraStr, const char* format) {
     }
     return true;
 }
-void imprimirMatriz(const std::vector<std::vector<int>>& matriz) {
+void imprimirMatriz(const std::vector<std::vector<double>>& matriz) {
     for (const auto& fila : matriz) {
         for (int elemento : fila) {
             std::cout << elemento << " ";
@@ -174,4 +174,14 @@ void waitForEnter() {
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
 }
+bool tieneEspaciosVacios(const std::string& cadena) {
+    return std::find_if(cadena.begin(), cadena.end(), [](char c) {
+        return std::isspace(static_cast<unsigned char>(c)); // Comprueba si el carácter es un espacio en blanco
+    }) != cadena.end();
+}
+void cerrarPrograma() {
+    std::cout << "Cerrando el programa. Adiós.\n";
+    exit(0); // Puedes usar otro valor si prefieres un código de salida diferente
+}
+
 #endif

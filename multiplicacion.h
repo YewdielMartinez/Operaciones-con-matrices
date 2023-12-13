@@ -1,29 +1,38 @@
 #ifndef MULTIPLICACION_H
 #define MULTIPLICACION_H
-#include <iostream>
-#include <vector>
+
+#include "Validaciones.h"
 void MenuPrincipal();
 // Variables para almacenar las matrices y el HistorialMulti
-std::vector<std::vector<std::vector<int>>> HistorialMulti;
-std::vector<std::vector<int>> multiplicacionMatrices(const std::vector<std::vector<int>>& matrizA, const std::vector<std::vector<int>>& matrizB) {
+std::vector<std::vector<std::vector<double>>> HistorialMulti;
+std::vector<std::vector<double>> multiplicacionMatrices(const std::vector<std::vector<double>>& matrizA, const std::vector<std::vector<double>>& matrizB) {
     if (matrizA[0].size() != matrizB.size()) {
-        throw std::invalid_argument("El número de columnas de la matrizA debe ser igual al número de filas de la matrizB.");
+        std::cout << "El número de columnas de la matriz A debe ser igual al número de filas de la matriz B para la multiplicación.\n";
         MenuPrincipal();
     }
 
+    if (matrizA.empty() || matrizB.empty() || matrizA[0].empty() || matrizB[0].empty()) {
+        std::cout << "Las matrices no pueden estar vacías para la multiplicación.\n";
+        MenuPrincipal();
+    }
+
+    if (matrizA.size() == 0 || matrizA[0].size() == 0 || matrizB.size() == 0 || matrizB[0].size() == 0) {
+        std::cout << "Las matrices deben tener al menos una fila y una columna para la multiplicación.\n";
+        MenuPrincipal();
+    }
     int filasA = matrizA.size();
     int columnasA = matrizA[0].size();
     int filasB = matrizB.size();
     int columnasB = matrizB[0].size();
 
     // Inicializa la matriz resultante con las mismas filas de la matrizA y las mismas columnas de la matrizB
-    std::vector<std::vector<int>> resultado(filasA, std::vector<int>(columnasB, 0));
+    std::vector<std::vector<double>> resultado(filasA, std::vector<double>(columnasB, 0));
 
     HistorialMulti.clear();  // Limpiar HistorialMulti
 
     // Realiza la multiplicación de las matrices
     for (int i = 0; i < filasA; ++i) {
-        std::vector<std::vector<int>> paso;  // HistorialMulti de este paso
+        std::vector<std::vector<double>> paso;  // HistorialMulti de este paso
         for (int j = 0; j < columnasB; ++j) {
             for (int k = 0; k < columnasA; ++k) {
                 resultado[i][j] += matrizA[i][k] * matrizB[k][j];

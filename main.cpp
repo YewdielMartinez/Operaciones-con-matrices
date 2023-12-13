@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
-#include <stdexcept>
+#include <fstream>
+#include <Eigen/Dense>
 #include "suma.h"
 #include "resta.h"
 #include "division.h"
@@ -8,31 +9,159 @@
 #include "Validaciones.h"
 
 
-// Función para solicitar las filas y columnas de una matriz
-void solicitarDimensiones(std::vector<std::vector<int>>& matriz, const std::string& nombre) {
+void solicitarDimensiones(std::vector<std::vector<double>>& matriz, const std::string& nombre) {
     matriz.clear();
     size_t filas, columnas;
-    std::cout << "Ingrese el número de filas de la matriz " << nombre << ": ";
-    std::cin >> filas;
-    std::cout << "Ingrese el número de columnas de la matriz " << nombre << ": ";
-    std::cin >> columnas;
+    // Validar la entrada para el número de filas
+    while (true) {
+        std::cout << "Ingrese el número de filas de la matriz " << nombre << ": ";
+        if (std::cin >> filas && filas > 0) {
+            // La entrada es un número válido y mayor que cero, salir del bucle
+            break;
+        } else {
+            std::cin.clear(); // Limpiar el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descartar la entrada incorrecta
+            std::cout << "Error. Ingrese un número de filas válido mayor que cero.\n";
+        }
+    }
 
-    matriz.resize(filas, std::vector<int>(columnas, 0.0));
+    // Validar la entrada para el número de columnas
+    while (true) {
+        std::cout << "Ingrese el número de columnas de la matriz " << nombre << ": ";
+        if (std::cin >> columnas && columnas > 0) {
+            // La entrada es un número válido y mayor que cero, salir del bucle
+            break;
+        } else {
+            std::cin.clear(); // Limpiar el estado de error
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descartar la entrada incorrecta
+            std::cout << "Error. Ingrese un número de columnas válido mayor que cero.\n";
+        }
+    }
+    matriz.resize(filas, std::vector<double>(columnas, 0.0));
 
     std::cout << "Ingrese los elementos de la matriz " << nombre << ":\n";
     for (size_t i = 0; i < filas; ++i) {
         for (size_t j = 0; j < columnas; ++j) {
-            std::cout << nombre << "[" << i << "][" << j << "]: ";
-            std::cin >> matriz[i][j];
+            while (true) {
+                std::cout << nombre << "[" << i << "][" << j << "]: ";
+                if (std::cin >> matriz[i][j]) {
+                    // La entrada es un número válido, salir del bucle
+                    break;
+                } else {
+                    std::cin.clear(); // Limpiar el estado de error
+                    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Descartar la entrada incorrecta
+                    std::cout << "Error. Ingrese un número válido.\n";
+                }
+            }
         }
     }
+}
+
+void guardarEnArchivo(const std::string& operacion,
+                      const std::vector<std::vector<double>>& matrizA,
+                      const std::vector<std::vector<double>>& matrizB,
+                      const std::vector<std::vector<double>>& resultado) {
+    std::ofstream archivo("historial.txt",std::ios::app);
+
+    if (archivo.is_open()) {
+        // Guardar información en el archivo
+        archivo << "Operacion: " << operacion << "\n\n";
+        archivo << "Matriz A:\n";
+        for (const auto& fila : matrizA) {
+            for (double elemento : fila) {
+                archivo << elemento << " ";
+            }
+            archivo << "\n";
+        }
+        archivo << "\nMatriz B:\n";
+        for (const auto& fila : matrizB) {
+            for (double elemento : fila) {
+                archivo << elemento << " ";
+            }
+            archivo << "\n";
+        }
+        archivo << "\nResultado:\n";
+        for (const auto& fila : resultado) {
+            for (double elemento : fila) {
+                archivo << elemento << " ";
+            }
+            archivo << "\n";
+        }
+
+        archivo.close();
+        std::cout << "Guardado exitoso en el archivo: historial.txt\n";
+    } else {
+        std::cerr << "No se pudo abrir el archivo para escritura.\n";
+    }
+}
+
+void leerMatrizDesdeArchivo(std::ifstream& archivo, std::vector<std::vector<double>>& matriz) {
+    std::string linea;
+    matriz.clear();
+    while (std::getline(archivo, linea) && !linea.empty()) {
+        std::istringstream iss(linea);
+        double valor;
+        std::vector<double> fila;
+        while (iss >> valor) {
+            fila.push_back(valor);
+        }
+        matriz.push_back(fila);
+    }
+}
+
+void cargarDesdeArchivo(std::string& operacion,
+                        std::vector<std::vector<double>>& matrizA,
+                        std::vector<std::vector<double>>& matrizB,
+                        std::vector<std::vector<double>>& resultado) {
+    std::ifstream archivo("historial.txt");
+
+    if (archivo.is_open()) {
+        // Leer información desde el archivo
+        std::string linea;
+        while (std::getline(archivo, linea)) {
+            if (linea.find("Operacion: ") != std::string::npos) {
+                operacion = linea.substr(11);
+            } else if (linea == "Matriz A:") {
+                leerMatrizDesdeArchivo(archivo, matrizA);
+            } else if (linea == "Matriz B:") {
+                leerMatrizDesdeArchivo(archivo, matrizB);
+            } else if (linea == "Resultado:") {
+                leerMatrizDesdeArchivo(archivo, resultado);
+            }
+        }
+
+        archivo.close();
+        std::cout << "Carga exitosa desde el archivo: historial.txt\n";
+    } else {
+        std::cerr << "No se pudo abrir el archivo para lectura.\n";
+    }
+}
+void mostrarHistorialCompleto() {
+    std::ifstream archivo("historial.txt");
+
+    if (archivo.is_open()) {
+        std::string linea;
+        while (std::getline(archivo, linea)) {
+            std::cout << linea << "\n";
+        }
+        archivo.close();
+    } else {
+        std::cerr << "No se pudo abrir el archivo para lectura.\n";
+    }
+}
+void limpiarHistorial() {
+    std::ofstream archivo("historial.txt", std::ios::trunc); // Abrir el archivo en modo truncar para eliminar el contenido
+    archivo.close();
+    std::cout << "Historial limpiado exitosamente.\n";
 }
 void agregarNuevasMatrices() {
     solicitarDimensiones(matrizA, "A");
     solicitarDimensiones(matrizB, "B");
+    MenuPrincipal();
 }
 void MenuPrincipal(){
         // Mostrar las matrices y el historial
+        std::string operacion;
         std::cout << "Matriz A:\n";
         imprimirMatriz(matrizA);
         std::cout << "\nMatriz B:\n";
@@ -44,50 +173,117 @@ void MenuPrincipal(){
         std::cout << "3. Multiplicacion de matrices" << std::endl;
         std::cout << "4. Division de matrices" << std::endl;
         std::cout << "5. Agregar nuevas matrices" << std::endl;
-        std::cout << "6. Cerrar Programa. " << std::endl;
+        std::cout << "6.Mostrar el historial completo  " << std::endl;
+        std::cout << "7. Limpiar Historial. " << std::endl;
+        std::cout << "8. Cerrar Programa. " << std::endl;
 
-        opcion = pedirNumeroMM();//Aqui hace la llamada a la funcion para que pueda validar el numero
+        opcion = pedirNumeroMC();//Aqui hace la llamada a la funcion para que pueda validar el numero
         //Aqui hacemos que un switch case para elegir la opcion y llame a su respectiva funcion
         do{
      
             switch(opcion){
-            case 1:HistorialSuma.push_back(sumaMatrices(matrizA,matrizB));
-            std::cout<<"Resultado de la matriz\n";
-            imprimirMatriz(sumaMatrices(matrizA,matrizB));
-            mostrarHistorialSuma();
-            waitForEnter();
-            MenuPrincipal();
-            break;
-            case 2:HistorialResta.push_back(restaMatrices(matrizA, matrizB));
-            LimpiarPantalla();
-            std::cout<<"Resultado de la matriz\n";
-            imprimirMatriz(restaMatrices(matrizA,matrizB));
-            mostrarHistorialResta();
-            waitForEnter();
-            MenuPrincipal();
-            break;
+            case 1: 
+            {       
+                std::vector<std::vector<double>> resultado = sumaMatrices(matrizA, matrizB);
+                
+                HistorialSuma.push_back(resultado);
+
+                // Mostrar resultado
+                std::cout << "Resultado de la suma:\n";
+                imprimirMatriz(resultado);
+                mostrarHistorialSuma();
+                waitForEnter();
+
+                // Guardar en archivo
+                guardarEnArchivo("Suma", matrizA, matrizB, resultado);
+                        // Cargar desde archivo (ejemplo)
+                std::vector<std::vector<double>> matrizACargada, matrizBCargada, resultadoCargado;
+                cargarDesdeArchivo( operacion, matrizACargada, matrizBCargada, resultadoCargado);
+       
+                MenuPrincipal();
+                break;
+            }
+            case 2:
+            {       
+                std::vector<std::vector<double>> resultado = restaMatrices(matrizA, matrizB);
+                HistorialResta.push_back(resultado);
+
+                // Mostrar resultado
+                std::cout << "Resultado de la resta:\n";
+                imprimirMatriz(resultado);
+                mostrarHistorialResta();
+                waitForEnter();
+
+                // Guardar en archivo
+                guardarEnArchivo("Resta", matrizA, matrizB, resultado);
+                        // Cargar desde archivo (ejemplo)
+                std::vector<std::vector<double>> matrizACargada, matrizBCargada, resultadoCargado;
+                cargarDesdeArchivo( operacion, matrizACargada, matrizBCargada, resultadoCargado);
+       
+                MenuPrincipal();
+                break;
+            }
             case 3:
-            HistorialMulti.push_back(multiplicacionMatrices(matrizA, matrizB));
-            LimpiarPantalla();
-            std::cout<<"Resultado de la matriz\n";
-            imprimirMatriz(multiplicacionMatrices(matrizA,matrizB));
-            mostrarHistorialMultiplicacion();
-            waitForEnter();
-            MenuPrincipal();
-            break;
+            {       
+                std::vector<std::vector<double>> resultado = multiplicacionMatrices(matrizA, matrizB);
+                HistorialMulti.push_back(resultado);
+
+                // Mostrar resultado
+                std::cout << "Resultado de la multiplicacion:\n";
+                imprimirMatriz(resultado);
+                mostrarHistorialMultiplicacion();
+                waitForEnter();
+
+                // Guardar en archivo
+                guardarEnArchivo("Multiplicacion", matrizA, matrizB, resultado);
+                        // Cargar desde archivo (ejemplo)
+                std::vector<std::vector<double>> matrizACargada, matrizBCargada, resultadoCargado;
+                cargarDesdeArchivo( operacion, matrizACargada, matrizBCargada, resultadoCargado);
+       
+                MenuPrincipal();
+                break;
+            }
             case 4:
-            LimpiarPantalla();
-            break;
+            {       
+                std::vector<std::vector<double>> resultado = divisionMatrices(matrizA, matrizB);
+                HistorialDivision.push_back(resultado);
+
+                // Mostrar resultado
+                std::cout << "Resultado de la Division:\n";
+                imprimirMatriz(resultado);
+                mostrarHistorialDivision();
+                waitForEnter();
+
+                // Guardar en archivo
+                guardarEnArchivo("Division", matrizA, matrizB, resultado);
+                        // Cargar desde archivo (ejemplo)
+                std::vector<std::vector<double>> matrizACargada, matrizBCargada, resultadoCargado;
+                cargarDesdeArchivo( operacion, matrizACargada, matrizBCargada, resultadoCargado);
+       
+                MenuPrincipal();
+                break;
+            }
             case 5:
-            agregarNuevasMatrices();
+                agregarNuevasMatrices();
             break;
             case 6:
+                mostrarHistorialCompleto();
+                waitForEnter();
+                MenuPrincipal();
+                break;
+            case 7: 
+                limpiarHistorial();
+                waitForEnter();
+                MenuPrincipal();
+                break;
+            case 8:
             std::cout << "Saliendo del programa. ¡Hasta luego!" << std::endl;
+            cerrarPrograma();
             break;
-            default: std:: cout <<"Elige una opcion del 1 al 6";break;
+            default: std:: cout <<"Elige una opcion del 1 al 8";break;
 
             }   
-        } while (opcion!=5);
+        } while (opcion!=8);
 
 }
 int main ()
